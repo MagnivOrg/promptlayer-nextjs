@@ -2,6 +2,7 @@ import BaseAnthropic from "@anthropic-ai/sdk";
 import { promptlayer } from "promptlayer";
 const Anthropic: typeof BaseAnthropic = promptlayer.Anthropic;
 const anthropic = new Anthropic();
+export const runtime = "edge";
 export const POST = async () => {
   const response = await anthropic.messages.create({
     messages: [
