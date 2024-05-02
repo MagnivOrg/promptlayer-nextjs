@@ -1,18 +1,20 @@
 import BaseAnthropic from "@anthropic-ai/sdk";
+import { AnthropicStream, StreamingTextResponse } from "ai";
 import { promptlayer } from "promptlayer";
+
+export const runtime = "edge";
+
 const Anthropic: typeof BaseAnthropic = promptlayer.Anthropic;
 const anthropic = new Anthropic();
-export const runtime = "edge";
-export const POST = async () => {
+
+export const POST = async (request: Request) => {
+  const { messages } = await request.json();
   const response = await anthropic.messages.create({
-    messages: [
-      {
-        role: "user",
-        content: "What is the capital of France?",
-      },
-    ],
+    messages,
     max_tokens: 100,
     model: "claude-3-sonnet-20240229",
+    stream: true,
   });
-  return Response.json(response.content[0].text);
+  const stream = AnthropicStream(response);
+  return new StreamingTextResponse(stream);
 };
